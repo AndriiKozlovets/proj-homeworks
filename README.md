@@ -1,1 +1,1 @@
-# pros-homeworks
+# proj-homeworks
