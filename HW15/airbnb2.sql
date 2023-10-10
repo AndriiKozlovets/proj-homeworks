@@ -1,9 +1,9 @@
 CREATE TABLE users (
     user_id SERIAL PRIMARY KEY,
-    user_type VARCHAR(10),
-    first_name VARCHAR(50),
-    last_name VARCHAR(50),
-    email VARCHAR(100)
+    user_type VARCHAR(10) NOT NULL,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    email VARCHAR(100) NOT NULL
 );
 
 CREATE TABLE rooms (
@@ -23,25 +23,24 @@ CREATE TABLE reservations (
     check_in_date DATE,
     check_out_date DATE,
     paid BOOLEAN,
-    FOREIGN KEY (guest_id) REFERENCES users(user_id),
-    FOREIGN KEY (room_id) REFERENCES rooms(room_id)
+    FOREIGN KEY (guest_id) REFERENCES users(user_id)
 );
 
 CREATE TABLE reviews (
     review_id SERIAL PRIMARY KEY,
-    guest_id INT,
-    host_id INT,
-    room_id INT,
+    reservation_id INT,
     rating INT,
     comment TEXT,
     review_comment TEXT,
-    FOREIGN KEY (guest_id) REFERENCES users(user_id),
-    FOREIGN KEY (host_id) REFERENCES users(user_id),
-    FOREIGN KEY (room_id) REFERENCES rooms(room_id)
+    FOREIGN KEY (reservation_id) REFERENCES reservations(reservation_id),
+);
+
+CREATE TABLE payments (
+    payment_id SERIAL PRIMARY KEY,
+    reservation_id INT,
+    amount DECIMAL(10, 2),
+    FOREIGN KEY (reservation_id) REFERENCES reservations(reservation_id)
 );
 
 ALTER TABLE reservations
-ADD paid BOOLEAN DEFAULT FALSE;
-
-ALTER TABLE reviews
-ADD review_comment TEXT;
+ADD COLUMN paid BOOLEAN DEFAULT FALSE;
