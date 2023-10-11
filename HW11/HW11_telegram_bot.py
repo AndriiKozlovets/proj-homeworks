@@ -3,8 +3,7 @@ import os
 import telebot
 import requests
 
-load_dotenv("/Users/andrykozlovets/Documents/\
-PRJCT Python Beginner/HM/gifs.env")
+load_dotenv('./gifs.env')
 
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 GIPHY_API_KEY = os.getenv("GIPHY_API_KEY")
