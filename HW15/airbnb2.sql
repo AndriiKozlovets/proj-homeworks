@@ -24,6 +24,7 @@ CREATE TABLE reservations (
     check_out_date DATE,
     paid BOOLEAN,
     FOREIGN KEY (guest_id) REFERENCES users(user_id)
+    FOREIGN KEY (room_id) REFERENCES rooms(room_id)
 );
 
 CREATE TABLE reviews (
