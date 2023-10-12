@@ -31,16 +31,22 @@ CREATE TABLE reservations (
 
 CREATE TABLE reviews (
     review_id SERIAL PRIMARY KEY,
-    guest_id INT,
-    host_id INT,
-    room_id INT,
+    reservation_id INT,
     rating INT,
     comment TEXT,
     review_comment TEXT,
-    FOREIGN KEY (guest_id) REFERENCES users(user_id),
-    FOREIGN KEY (host_id) REFERENCES users(user_id),
-    FOREIGN KEY (room_id) REFERENCES rooms(room_id)
+    FOREIGN KEY (reservation_id) REFERENCES reservations(reservation_id),
 );
+
+CREATE TABLE payments (
+    payment_id SERIAL PRIMARY KEY,
+    reservation_id INT,
+    amount DECIMAL(10, 2),
+    FOREIGN KEY (reservation_id) REFERENCES reservations(reservation_id)
+);
+
+ALTER TABLE reservations
+ADD COLUMN paid BOOLEAN DEFAULT FALSE;
 
 -- 2. 3 rows (using INSERT queries) for each table in the data model
 
@@ -66,11 +72,18 @@ VALUES
     (1, 3, '2023-10-03', '2023-10-07', TRUE);
 
 -- Add 3 reviews
-INSERT INTO reviews (guest_id, host_id, room_id, rating, comment, review_comment)
+INSERT INTO reviews (reservation_id, rating, comment, review_comment)
 VALUES 
-    (3, 1, 1, 5, 'Great experience!', 'Thank you Andrii!'),
-    (3, 1, 2, 4, 'Nice place, but could use a fridge.', 'Appreciate the feedback.'),
-    (1, 2, 3, 5, 'Amazing host and property!', 'Thank you Maksym!');
+    (1, 5, 'Great experience!', 'Thank you Andrii!'),
+    (2, 4, 'Nice place, but could use a fridge.', 'Appreciate the feedback.'),
+    (3, 5, 'Amazing host and property!', 'Thank you Maksym!');
+
+-- Add 3 payments
+INSERT INTO payments (reservation_id, amount)
+VALUES 
+    (1, 500.00),
+    (2, 600.00),
+    (3, 400.00);
 
 -- 3.1. User who had the biggest amount of reservations
 
@@ -93,8 +106,9 @@ SELECT
 FROM users u
 JOIN rooms rm ON u.user_id = rm.host_id
 JOIN reservations rs ON rm.room_id = rs.room_id
-WHERE rs.check_in_date >= CURRENT_DATE - INTERVAL '1 month'
-GROUP BY u.user_id
+JOIN payments p ON rs.reservation_id = p.reservation_id
+WHERE DATE_TRUNC('month', p.payment_date) = DATE_TRUNC('month', CURRENT_DATE) - INTERVAL '1 month'
+GROUP BY u.user_id, u.first_name, u.last_name
 ORDER BY earnings DESC
 LIMIT 1;
 
@@ -106,7 +120,8 @@ SELECT
     ROUND(AVG(rev.rating), 2) AS avg_rating
 FROM users u
 JOIN rooms rm ON u.user_id = rm.host_id
+JOIN reservations res ON rm.room_id = res.room_id
 JOIN reviews rev ON rm.room_id = rev.room_id
-GROUP BY u.user_id
+GROUP BY u.user_id, u.first_name, u.last_name
 ORDER BY avg_rating DESC
 LIMIT 1;
