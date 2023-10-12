@@ -16,6 +16,8 @@ CREATE TABLE rooms (
     ac BOOLEAN,
     refrigerator BOOLEAN,
     FOREIGN KEY (host_id) REFERENCES users(user_id)
+      ON DELETE SET NULL
+      ON UPDATE CASCADE
 );
 
 CREATE TABLE reservations (
@@ -25,8 +27,12 @@ CREATE TABLE reservations (
     check_in_date DATE,
     check_out_date DATE,
     paid BOOLEAN,
-    FOREIGN KEY (guest_id) REFERENCES users(user_id),
+    FOREIGN KEY (guest_id) REFERENCES users(user_id)
+      ON DELETE CASCADE
+      ON UPDATE CASCADE,
     FOREIGN KEY (room_id) REFERENCES rooms(room_id)
+      ON DELETE CASCADE
+      ON UPDATE CASCADE
 );
 
 CREATE TABLE reviews (
@@ -35,7 +41,9 @@ CREATE TABLE reviews (
     rating INT,
     comment TEXT,
     review_comment TEXT,
-    FOREIGN KEY (reservation_id) REFERENCES reservations(reservation_id),
+    FOREIGN KEY (reservation_id) REFERENCES reservations(reservation_id)
+      ON DELETE CASCADE
+      ON UPDATE CASCADE
 );
 
 CREATE TABLE payments (
@@ -43,6 +51,8 @@ CREATE TABLE payments (
     reservation_id INT,
     amount DECIMAL(10, 2),
     FOREIGN KEY (reservation_id) REFERENCES reservations(reservation_id)
+      ON DELETE CASCADE
+      ON UPDATE CASCADE
 );
 
 ALTER TABLE reservations
