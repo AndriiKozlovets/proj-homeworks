@@ -15,7 +15,7 @@ class TestBank(unittest.TestCase):
         self.assertEqual(account.get_balance(), 0.0)
         self.assertEqual(account.get_account_number(), '5001')
 
-    def test_update_with_print_mock(self):
+    def test_update(self):
         account1 = SavingsAccount(2000, '2001', 5)
         account2 = CurrentAccount(-3000, '3001', 1000)
 
